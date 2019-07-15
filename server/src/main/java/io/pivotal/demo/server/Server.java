@@ -47,7 +47,7 @@ public class Server {
     @Component
     final class Flipper implements ApplicationRunner {
 
-        private static final int MAX_DELAY = 10;
+        private static final int MAX_DELAY = 30;
 
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

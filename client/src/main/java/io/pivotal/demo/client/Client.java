@@ -1,10 +1,6 @@
 package io.pivotal.demo.client;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.micrometer.CircuitBreakerMetrics;
-import io.github.resilience4j.timelimiter.TimeLimiterConfig;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,16 +9,14 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.circuitbreaker.commons.CircuitBreaker;
-import org.springframework.cloud.circuitbreaker.commons.CircuitBreakerFactory;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.time.Instant;
 
+@EnableCircuitBreaker
 @SpringBootApplication
 public class Client {
 
@@ -30,75 +24,56 @@ public class Client {
         SpringApplication.run(Client.class, args);
     }
 
-    @Bean
-    CircuitBreaker circuitBreaker(CircuitBreakerFactory circuitBreakerFactory, CircuitBreakerRegistry registry, MeterRegistry meterRegistry) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("alpha");
-        registry.circuitBreaker("alpha", CircuitBreakerConfig.custom()
-            .waitDurationInOpenState(Duration.ofSeconds(1))
-            .build());
-
-        CircuitBreakerMetrics.ofCircuitBreakerRegistry(registry).bindTo(meterRegistry);
-
-        return circuitBreaker;
-    }
-
-    @Bean
-    Resilience4JCircuitBreakerFactory circuitBreakerFactory(CircuitBreakerRegistry registry) {
-        Resilience4JCircuitBreakerFactory factory = new Resilience4JCircuitBreakerFactory();
-
-        factory.configureCircuitBreakerRegistry(registry);
-        factory.configureDefault(s -> new Resilience4JConfigBuilder(s)
-            .circuitBreakerConfig(CircuitBreakerConfig.custom()
-                .waitDurationInOpenState(Duration.ofSeconds(1))
-                .build())
-            .timeLimiterConfig(TimeLimiterConfig.ofDefaults())
-            .build());
-
-        return factory;
-    }
-
-    @Bean
-    CircuitBreakerRegistry circuitBreakerRegistry() {
-        return CircuitBreakerRegistry.ofDefaults();
-    }
-
     @Component
     static final class Reader implements ApplicationRunner {
 
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-        private final CircuitBreaker circuitBreaker;
+        private final Remote remote;
 
-        private final RestTemplate restTemplate;
-
-        Reader(CircuitBreaker circuitBreaker, RestTemplateBuilder restTemplateBuilder, @Value("${endpoint}") String uri) {
-            this.circuitBreaker = circuitBreaker;
-            this.restTemplate = restTemplateBuilder.rootUri(uri).build();
-
-            this.logger.info("Connecting to {}", uri);
+        Reader(Remote remote) {
+            this.remote = remote;
         }
 
         @Override
         public void run(ApplicationArguments args) {
+            Instant nextLog = nextLog();
+
             for (int i = 0; i < Integer.MAX_VALUE; i++) {
 
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                String s = this.remote.request();
 
-                String s = this.circuitBreaker.run(
-                    () -> {
-                        this.logger.debug("Attempting");
-                        return this.restTemplate.getForObject("/", String.class);
-                    },
-                    t -> "fallback");
-
-//                if (i % 10_000 == 0) {
+                if (Instant.now().isAfter(nextLog)) {
                     this.logger.debug("Call {}: {}", i, s);
-//                }
+                    nextLog = nextLog();
+                }
             }
+        }
+
+        private Instant nextLog() {
+            return Instant.now().plus(Duration.ofSeconds(2));
+        }
+    }
+
+    @Component
+    static class Remote {
+
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        private final RestTemplate restTemplate;
+
+        Remote(RestTemplateBuilder restTemplateBuilder, @Value("${endpoint}") String uri) {
+            this.restTemplate = restTemplateBuilder.rootUri(uri).build();
+            this.logger.info("Connecting to {}", uri);
+        }
+
+        String fallback() {
+            return "fallback";
+        }
+
+        @HystrixCommand(fallbackMethod = "fallback")
+        String request() {
+            return this.restTemplate.getForObject("/", String.class);
         }
     }
 
