@@ -1,0 +1,13 @@
+---
+promregator:
+  authenticator:
+    type: none
+
+  targets:
+    - orgName: bhale
+      spaceName: development
+      applicationName: circuit-breaker-client
+
+cf:
+  api_host: api.run.pivotal.io
+  username: bhale@pivotal.io
