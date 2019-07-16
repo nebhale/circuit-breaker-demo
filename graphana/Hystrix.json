@@ -46,7 +46,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1563309312720,
+  "iteration": 1563309312726,
   "links": [],
   "panels": [
     {
@@ -68,9 +68,9 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 2,
+        "h": 2,
+        "w": 4,
+        "x": 1,
         "y": 0
       },
       "id": 8,
@@ -92,9 +92,9 @@
       "nullText": null,
       "options": {},
       "postfix": "/s",
-      "postfixFontSize": "100%",
+      "postfixFontSize": "50%",
       "prefix": "Host:",
-      "prefixFontSize": "100%",
+      "prefixFontSize": "50%",
       "rangeMaps": [
         {
           "from": "null",
@@ -122,7 +122,7 @@
       "timeShift": null,
       "title": "Host Request Rate",
       "type": "singlestat",
-      "valueFontSize": "100%",
+      "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
@@ -153,10 +153,10 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 3,
-        "w": 6,
+        "h": 2,
+        "w": 4,
         "x": 1,
-        "y": 3
+        "y": 2
       },
       "id": 6,
       "interval": null,
@@ -178,9 +178,9 @@
       "options": {},
       "pluginVersion": "6.2.5",
       "postfix": "/s",
-      "postfixFontSize": "100%",
+      "postfixFontSize": "50%",
       "prefix": "Cluster:",
-      "prefixFontSize": "100%",
+      "prefixFontSize": "50%",
       "rangeMaps": [
         {
           "from": "null",
@@ -211,7 +211,7 @@
       "timeShift": null,
       "title": "Cluster Request Rate",
       "type": "singlestat",
-      "valueFontSize": "100%",
+      "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
@@ -244,10 +244,10 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 3,
-        "w": 5,
+        "h": 2,
+        "w": 3,
         "x": 2,
-        "y": 6
+        "y": 4
       },
       "id": 2,
       "interval": null,
@@ -270,7 +270,7 @@
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "Circuit",
-      "prefixFontSize": "100%",
+      "prefixFontSize": "50%",
       "rangeMaps": [
         {
           "from": "null",
@@ -298,7 +298,7 @@
       "timeShift": null,
       "title": "Status",
       "type": "singlestat",
-      "valueFontSize": "100%",
+      "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
@@ -332,10 +332,10 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 0,
-        "y": 9
+        "h": 2,
+        "w": 2,
+        "x": 1,
+        "y": 6
       },
       "id": 4,
       "interval": null,
@@ -394,7 +394,7 @@
           "value": "null"
         }
       ],
-      "valueName": "avg"
+      "valueName": "current"
     }
   ],
   "refresh": "5s",
@@ -459,5 +459,5 @@
   "timezone": "",
   "title": "Hystrix",
   "uid": "OfrZqgHZk",
-  "version": 5
+  "version": 7
 }
