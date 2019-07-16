@@ -12,6 +12,7 @@
     <artifactId>circuit-breaker-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <description>Circuit Breaker Demo</description>
+    <packaging>pom</packaging>
 
     <modules>
         <module>client</module>
@@ -19,7 +20,7 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
     </properties>
 

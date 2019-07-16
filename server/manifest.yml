@@ -1,0 +1,4 @@
+---
+applications:
+  - name: circuit-breaker-server
+    path: target/server-0.0.1-SNAPSHOT.jar

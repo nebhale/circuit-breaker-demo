@@ -1,0 +1,7 @@
+---
+applications:
+  - name: circuit-breaker-client
+    path: target/client-0.0.1-SNAPSHOT.jar
+    instances: 3
+    env:
+      ROOT_URI: https://circuit-breaker-server.cfapps.io
