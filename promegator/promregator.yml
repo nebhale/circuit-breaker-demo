@@ -7,6 +7,7 @@ promregator:
     - orgName: bhale
       spaceName: development
       applicationName: circuit-breaker-client
+      path: /actuator/prometheus
 
 cf:
   api_host: api.run.pivotal.io
